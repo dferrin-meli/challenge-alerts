@@ -9,5 +9,5 @@ import (
 
 func main() {
 	cfg := conf.GetData()
-	application.NewServer(gin.Default()).AddHandlers().Run(cfg)
+	application.NewServer(gin.Default()).AddHandlers(cfg).Run(cfg)
 }
