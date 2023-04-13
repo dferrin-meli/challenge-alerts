@@ -10,29 +10,21 @@ import (
 )
 
 type AlertsHandler struct {
-	validate *validator.Validate
+	alertService domain.AlertsService
+	validate     *validator.Validate
 }
 
-func NewAlertsHandler(validate *validator.Validate) AlertsHandler {
+func NewAlertsHandler(validate *validator.Validate, alertService domain.AlertsService) AlertsHandler {
 	return AlertsHandler{
-		validate: validate,
+		alertService: alertService,
+		validate:     validate,
 	}
 }
 
 func (handler *AlertsHandler) GetAll(ctx *gin.Context) common.ApiError {
-	response := []domain.AlertsDTO{
-		{
-			Type:        "xxxx",
-			Description: "ddddd",
-			CreatedAt:   "hh-mm-ss-dd-mm-yyyy",
-			Country:     "Colombia",
-		},
-		{
-			Type:        "yyyy",
-			Description: "description example",
-			CreatedAt:   "hh-mm-ss-dd-mm-yyyy",
-			Country:     "Argentina",
-		},
+	response, err := handler.alertService.GetAll(ctx)
+	if err != nil {
+		return common.NewInternalServerApiError("Error getting alerts", err)
 	}
 	ctx.JSON(http.StatusOK, response)
 	return nil

@@ -25,7 +25,7 @@ type DBSettings struct {
 
 func GetData() *Data {
 	if instance == nil {
-		// ymlConfig := getYMLNewConfig()
+		ymlConfig := getYMLNewConfig()
 
 		port := os.Getenv("PORT")
 		env := os.Getenv("GIN_MODE")
@@ -39,6 +39,16 @@ func GetData() *Data {
 			Port:      port,
 			GinMode:   env,
 			TestScope: test,
+			ConfigurationDB: &DBSettings{
+				Username:           ymlConfig.GetString("db.username"),
+				Password:           os.Getenv("DB_PASS"),
+				Host:               os.Getenv("DB_HOST"),
+				Name:               ymlConfig.GetString("db.name"),
+				MaxIdleConnections: ymlConfig.GetInt("db.max-idle-connections"),
+				MaxOpenConnections: ymlConfig.GetInt("db.max-open-connections"),
+				NetProtocol:        ymlConfig.GetString("db.net-protocol"),
+				ConnectionTimeout:  ymlConfig.GetInt("db.connection-timeout"),
+			},
 		}
 	}
 

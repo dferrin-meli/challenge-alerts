@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	conf.LoadYMLConfiguration()
 	cfg := conf.GetData()
 	application.NewServer(gin.Default()).AddHandlers(cfg).Run(cfg)
 }

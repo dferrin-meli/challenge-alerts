@@ -1,0 +1,14 @@
+# The API loads the config in the following order
+#
+#   default.yml
+#     ↳ production.yml (Will override a config if its already defined or will add the new one if it was not defined)
+#         ↳ fury_<scope_name> (The same override/add policy applies here)
+#
+
+db:
+  username: "root"
+  name: "challenge"
+  max-idle-connections: 10
+  max-open-connections: 20
+  connection-timeout: 30
+  net-protocol: "tcp"
