@@ -3,13 +3,13 @@ package domain
 import "context"
 
 type AlertsDTO struct {
-	Type        string `json:"type"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	Country     string `json:"country"`
+	Type        string `form:"type" validate:"strregex=alpha_num"`
+	Description string `form:"description" validate:"strregex=alpha_num"`
+	CreatedAt   string `form:"created_at" binding:"required" validate:"strregex=datetime"`
+	Country     string `form:"country" validate:"strregex=alpha_num"`
 }
 
-type Alerts struct {
+type Alert struct {
 	Type        string `json:"type"`
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
@@ -22,8 +22,10 @@ type GetAllRequest struct {
 
 type AlertsService interface {
 	GetAll(ctx context.Context) ([]AlertsDTO, error)
+	Create(ctx context.Context, alert AlertsDTO) (*Alert, error)
 }
 
 type AlertsRepository interface {
-	GetAll(ctx context.Context) ([]Alerts, error)
+	GetAll(ctx context.Context) ([]Alert, error)
+	Create(ctx context.Context, alert Alert) (*Alert, error)
 }

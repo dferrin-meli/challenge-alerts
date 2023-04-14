@@ -19,6 +19,13 @@ const (
 	Created_at,
 	Country
 	FROM Alerts`
+
+	CreateQuery = `INSERT INTO Alerts (
+		Type,
+		Description,
+		Created_at,
+		Country
+		) VALUES(?,?,?,?)`
 )
 
 type AlertRepository struct {
@@ -31,7 +38,7 @@ func NewAlertsRepository(cfg *conf.Data, dbClient common.DBClient) domain.Alerts
 	}
 }
 
-func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alerts, error) {
+func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alert, error) {
 	queryContext, cancelFunc := context.WithTimeout(ctx, timeOut)
 	defer cancelFunc()
 	db := repository.dbClient.GetConnection()
@@ -45,9 +52,9 @@ func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alerts,
 	}
 	defer rows.Close()
 
-	var alerts []domain.Alerts
+	var alerts []domain.Alert
 	for rows.Next() {
-		var alert domain.Alerts
+		var alert domain.Alert
 		err := rows.Scan(
 			&alert.Type,
 			&alert.Description,
@@ -65,4 +72,21 @@ func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alerts,
 		return nil, rows.Err()
 	}
 	return alerts, nil
+}
+
+func (repository *AlertRepository) Create(ctx context.Context, alert domain.Alert) (*domain.Alert, error) {
+	queryContext, cancelFunc := context.WithTimeout(ctx, timeOut)
+	defer cancelFunc()
+	db := repository.dbClient.GetConnection()
+
+	_, err := db.ExecContext(queryContext, CreateQuery,
+		alert.Type,
+		alert.Description,
+		alert.CreatedAt,
+		alert.Country)
+
+	if err != nil {
+		return nil, err
+	}
+	return &alert, nil
 }

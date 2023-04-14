@@ -2,6 +2,7 @@ package service
 
 import (
 	"challenge/alerts/src/api/alerts/domain"
+	"challenge/alerts/src/api/application/common"
 	"context"
 )
 
@@ -30,7 +31,17 @@ func (service *AlertsService) GetAll(ctx context.Context) ([]domain.AlertsDTO, e
 	}
 	if err != nil {
 		// TODO log
-		return nil, err
+		return nil, err // no return this error
 	}
 	return alertsDto, nil
+}
+
+func (service *AlertsService) Create(ctx context.Context, alert domain.AlertsDTO) (*domain.Alert, error) {
+	common.NormalizeString(&alert.Country)
+	common.NormalizeString(&alert.Type)
+	response, err := service.alertsRepository.Create(ctx, domain.Alert(alert))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }
