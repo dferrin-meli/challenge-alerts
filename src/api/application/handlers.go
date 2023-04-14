@@ -17,6 +17,7 @@ func (r *Server) AddHandlers(cfg *conf.Data) *Server {
 	//Alerts
 	r.GET(fmt.Sprint(r.URLPrefix, "/alerts"), AdaptHandler(alertsHandler.GetAll))
 	r.POST(fmt.Sprint(r.URLPrefix, "/alerts"), AdaptHandler(alertsHandler.Create))
+	r.GET(fmt.Sprint(r.URLPrefix, "/alerts/search"), AdaptHandler(alertsHandler.Search))
 	return r
 }
 

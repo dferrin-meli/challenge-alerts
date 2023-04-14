@@ -45,3 +45,11 @@ func (service *AlertsService) Create(ctx context.Context, alert domain.AlertsDTO
 	}
 	return response, nil
 }
+
+func (service *AlertsService) Search(ctx context.Context, input domain.AlertSearchDTO) ([]domain.Alert, error) {
+	response, err := service.alertsRepository.Search(ctx, domain.AlertSearch(input))
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}

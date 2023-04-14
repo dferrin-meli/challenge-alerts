@@ -9,6 +9,14 @@ type AlertsDTO struct {
 	Country     string `form:"country" validate:"strregex=alpha_num"`
 }
 
+type AlertSearchDTO struct {
+	Input string `form:"input" binding:"required" validate:"strregex=alpha_num"`
+}
+
+type AlertSearch struct {
+	Input string
+}
+
 type Alert struct {
 	Type        string `json:"type"`
 	Description string `json:"description"`
@@ -23,9 +31,11 @@ type GetAllRequest struct {
 type AlertsService interface {
 	GetAll(ctx context.Context) ([]AlertsDTO, error)
 	Create(ctx context.Context, alert AlertsDTO) (*Alert, error)
+	Search(ctx context.Context, input AlertSearchDTO) ([]Alert, error)
 }
 
 type AlertsRepository interface {
 	GetAll(ctx context.Context) ([]Alert, error)
 	Create(ctx context.Context, alert Alert) (*Alert, error)
+	Search(ctx context.Context, input AlertSearch) ([]Alert, error)
 }

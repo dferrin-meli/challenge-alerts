@@ -26,6 +26,8 @@ const (
 		Created_at,
 		Country
 		) VALUES(?,?,?,?)`
+
+	SearchQuery = `SELECT Type, Description, Created_at, Country FROM Alerts WHERE Description LIKE ? OR Country LIKE ?`
 )
 
 type AlertRepository struct {
@@ -89,4 +91,40 @@ func (repository *AlertRepository) Create(ctx context.Context, alert domain.Aler
 		return nil, err
 	}
 	return &alert, nil
+}
+
+func (repository *AlertRepository) Search(ctx context.Context, query domain.AlertSearch) ([]domain.Alert, error) {
+	db := repository.dbClient.GetConnection()
+
+	likeDescription := "%" + query.Input + "%"
+	likeCountry := "%" + query.Input + "%"
+	rows, queryErr := db.Query(SearchQuery, likeDescription, likeCountry)
+	if queryErr != nil {
+		if errors.Is(queryErr, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, queryErr
+	}
+	defer rows.Close()
+
+	var alerts []domain.Alert
+	for rows.Next() {
+		var alert domain.Alert
+		err := rows.Scan(
+			&alert.Type,
+			&alert.Description,
+			&alert.CreatedAt,
+			&alert.Country,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		alerts = append(alerts, alert)
+	}
+
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+	return alerts, nil
 }
