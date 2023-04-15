@@ -61,3 +61,11 @@ func (service *AlertsService) GetAlertsByType(ctx context.Context, typeInput dom
 	}
 	return response, nil
 }
+
+func (service *AlertsService) GetMetrics(ctx context.Context) ([]domain.Metrics, error) {
+	response, err := service.alertsRepository.GetMetrics(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}

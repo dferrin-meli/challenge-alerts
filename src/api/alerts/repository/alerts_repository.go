@@ -36,6 +36,16 @@ const (
 	Country
 	FROM Alerts
 	WHERE Type = ?`
+
+	GetMetricsQuery = `SELECT
+	Country,
+	COUNT(*) AS Quantity
+	FROM Alerts
+	WHERE YEAR(Created_at) = YEAR(CURRENT_DATE())
+	AND MONTH(Created_at) = MONTH(CURRENT_DATE())
+	GROUP BY Country
+	ORDER BY Quantity DESC
+	LIMIT 3`
 )
 
 type AlertRepository struct {
@@ -171,4 +181,38 @@ func (repository *AlertRepository) GetAlertsByType(ctx context.Context, typeInpu
 		return nil, rows.Err()
 	}
 	return alerts, nil
+}
+
+func (repository *AlertRepository) GetMetrics(ctx context.Context) ([]domain.Metrics, error) {
+	queryContext, cancelFunc := context.WithTimeout(ctx, timeOut)
+	defer cancelFunc()
+	db := repository.dbClient.GetConnection()
+
+	rows, queryErr := db.QueryContext(queryContext, GetMetricsQuery)
+	if queryErr != nil {
+		if errors.Is(queryErr, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, queryErr
+	}
+	defer rows.Close()
+
+	var metrics []domain.Metrics
+	for rows.Next() {
+		var metric domain.Metrics
+		err := rows.Scan(
+			&metric.Country,
+			&metric.Quantity,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		metrics = append(metrics, metric)
+	}
+
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+	return metrics, nil
 }

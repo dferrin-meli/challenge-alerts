@@ -4,7 +4,7 @@ import "context"
 
 type AlertsDTO struct {
 	Type        string `form:"type" validate:"strregex=alpha_num"`
-	Description string `form:"description" validate:"strregex=alpha_num"`
+	Description string `form:"description" validate:"strregex=text"`
 	CreatedAt   string `form:"created_at" binding:"required" validate:"strregex=datetime"`
 	Country     string `form:"country" validate:"strregex=alpha_num"`
 }
@@ -28,6 +28,11 @@ type Alert struct {
 	Country     string `json:"country"`
 }
 
+type Metrics struct {
+	Country  string
+	Quantity int
+}
+
 type GetAllRequest struct {
 	Description string `form:"description" binding:"max=50" validate:"omitempty,strregex=alpha_num"`
 }
@@ -37,6 +42,7 @@ type AlertsService interface {
 	Create(ctx context.Context, alert AlertsDTO) (*Alert, error)
 	Search(ctx context.Context, input AlertSearchDTO) ([]Alert, error)
 	GetAlertsByType(ctx context.Context, typeInput AlertSearchByTypeDTO) ([]Alert, error)
+	GetMetrics(ctx context.Context) ([]Metrics, error)
 }
 
 type AlertsRepository interface {
@@ -44,4 +50,5 @@ type AlertsRepository interface {
 	Create(ctx context.Context, alert Alert) (*Alert, error)
 	Search(ctx context.Context, input AlertSearch) ([]Alert, error)
 	GetAlertsByType(ctx context.Context, typeInput string) ([]Alert, error)
+	GetMetrics(ctx context.Context) ([]Metrics, error)
 }

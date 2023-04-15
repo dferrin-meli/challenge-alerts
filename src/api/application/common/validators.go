@@ -15,6 +15,7 @@ const (
 	AlphaTagValidation                  = "alpha"
 	NumericTagValidation                = "numeric"
 	AlphanumericTagValidation           = "alphanum"
+	TextTagValidation                   = "text"
 	AlphanumericUnderScoreTagValidation = "alpha_num"
 	AlphanumericHyphenTagValidation     = "alpha-num"
 	LocationTagValidation               = "location"
@@ -44,6 +45,8 @@ func Strregex(fl validator.FieldLevel) bool {
 	toCheckString := fl.Field().String()
 
 	switch checkType {
+	case TextTagValidation:
+		checkExpr = `^[a-zA-Z0-9-+*/_\s]*$`
 	case AlphanumericUnderScoreTagValidation:
 		checkExpr = `^[a-zA-Z0-9_]*$`
 	case AlphanumericHyphenTagValidation:

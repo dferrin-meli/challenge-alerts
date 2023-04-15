@@ -86,3 +86,12 @@ func (handler *AlertsHandler) GetAlertByType(ctx *gin.Context) common.ApiError {
 	ctx.JSON(http.StatusOK, response)
 	return nil
 }
+
+func (handler *AlertsHandler) GetMetrics(ctx *gin.Context) common.ApiError {
+	response, err := handler.alertService.GetMetrics(ctx)
+	if err != nil {
+		return common.NewInternalServerApiError("Error getting alerts", err)
+	}
+	ctx.JSON(http.StatusOK, response)
+	return nil
+}
