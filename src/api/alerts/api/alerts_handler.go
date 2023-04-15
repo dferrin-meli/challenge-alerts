@@ -68,3 +68,21 @@ func (handler *AlertsHandler) Search(ctx *gin.Context) common.ApiError {
 	ctx.JSON(http.StatusOK, response)
 	return nil
 }
+
+func (handler *AlertsHandler) GetAlertByType(ctx *gin.Context) common.ApiError {
+	request := domain.AlertSearchByTypeDTO{}
+	if err := ctx.BindQuery(&request); err != nil {
+		return common.NewApiError("Error getting query data", err.Error(), http.StatusInternalServerError, common.CauseList{err})
+	}
+
+	if err := handler.validate.Struct(request); err != nil {
+		errMessage := fmt.Sprintf("Invalid body for Search alert by type: %s", err.Error())
+		return common.NewBadRequestApiError(errMessage)
+	}
+	response, err := handler.alertService.GetAlertsByType(ctx, request)
+	if err != nil {
+		return common.NewInternalServerApiError("Error getting alerts", err)
+	}
+	ctx.JSON(http.StatusOK, response)
+	return nil
+}

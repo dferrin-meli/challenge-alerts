@@ -28,6 +28,14 @@ const (
 		) VALUES(?,?,?,?)`
 
 	SearchQuery = `SELECT Type, Description, Created_at, Country FROM Alerts WHERE Description LIKE ? OR Country LIKE ?`
+
+	GetByTypeQuery = `SELECT
+	Type,
+	Description,
+	Created_at,
+	Country
+	FROM Alerts
+	WHERE Type = ?`
 )
 
 type AlertRepository struct {
@@ -99,6 +107,42 @@ func (repository *AlertRepository) Search(ctx context.Context, query domain.Aler
 	likeDescription := "%" + query.Input + "%"
 	likeCountry := "%" + query.Input + "%"
 	rows, queryErr := db.Query(SearchQuery, likeDescription, likeCountry)
+	if queryErr != nil {
+		if errors.Is(queryErr, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, queryErr
+	}
+	defer rows.Close()
+
+	var alerts []domain.Alert
+	for rows.Next() {
+		var alert domain.Alert
+		err := rows.Scan(
+			&alert.Type,
+			&alert.Description,
+			&alert.CreatedAt,
+			&alert.Country,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		alerts = append(alerts, alert)
+	}
+
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+	return alerts, nil
+}
+
+func (repository *AlertRepository) GetAlertsByType(ctx context.Context, typeInput string) ([]domain.Alert, error) {
+	queryContext, cancelFunc := context.WithTimeout(ctx, timeOut)
+	defer cancelFunc()
+	db := repository.dbClient.GetConnection()
+
+	rows, queryErr := db.QueryContext(queryContext, GetByTypeQuery, typeInput)
 	if queryErr != nil {
 		if errors.Is(queryErr, sql.ErrNoRows) {
 			return nil, nil

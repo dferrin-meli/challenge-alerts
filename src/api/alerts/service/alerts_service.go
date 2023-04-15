@@ -53,3 +53,11 @@ func (service *AlertsService) Search(ctx context.Context, input domain.AlertSear
 	}
 	return response, nil
 }
+
+func (service *AlertsService) GetAlertsByType(ctx context.Context, typeInput domain.AlertSearchByTypeDTO) ([]domain.Alert, error) {
+	response, err := service.alertsRepository.GetAlertsByType(ctx, typeInput.Type)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
+}
