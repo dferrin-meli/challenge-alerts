@@ -1,5 +1,3 @@
-# challenge-alerts
-
 
 # Setting up Development Environment for a challenge-alerts
 
@@ -12,6 +10,49 @@ Before setting up your development environment, make sure you have the following
 - Golang: Download and install Golang from the official website https://golang.org/dl/
 - Git: Download and install Git from the official website https://git-scm.com/downloads
 - Mysql: Download and install MySql from the official website https://dev.mysql.com/downloads/mysql/
+
+
+## Creating a Database and Table Using SQL
+To create a database and table using SQL, follow these steps:
+
+1. Open the MySQL and open a new script SQL
+
+2. To create a new database, run the following command:
+
+```sql
+CREATE DATABASE challenge
+```
+
+```sql
+USE challenge;
+```
+
+```sql
+CREATE TABLE Alerts (
+    Alert_id int NOT NULL AUTO_INCREMENT,
+    Type varchar(128) NOT NULL,
+    Description text,
+    Created_at datetime,
+    Country varchar(128) ,
+    PRIMARY KEY (Alert_id)
+
+);
+```
+if you prefer set data could run the next command
+
+```sql
+INSERT INTO challenge.Alerts (`Type`,Description,Created_at,Country) VALUES
+     ('Red','Incremental data access','2023-04-12 00:00:00','Colombia'),
+     ('Green','Default Config file Loaded','2023-04-13 00:00:00','Argentina'),
+     ('test1','description1','2023-04-12 00:00:00','Chile'),
+     ('test2','description2','2023-04-13 10:00:00','Mexico'),
+     ('test2','description2','2023-04-13 12:00:00','Mexico'),
+     ('Blue','this is a description','2023-03-27 12:00:00','Colombia'),
+     ('Red','be carefull with this alert','2023-04-11 16:00:00','Mexico'),
+     ('Yellow','use this alert to be carefull','2023-03-22 16:00:00','Argentina'),
+     ('Orange','alert orange to set ','2023-04-09 00:00:00','Chile');
+```
+
 
  ## Cloning the Repository
  To clone the repository, run the following command:
