@@ -98,3 +98,18 @@ To run the project, run the following command:
  ```bash
 ./<executable-name>
 ```
+
+## Send Request by postman
+
+Example table for executing requests to an endpoint.
+The table includes the necessary details for making HTTP requests to an endpoint,
+such as the request method, endpoint URL, and description.
+
+| Request Method | Endpoint URL  | Description |
+| ------ | ------ | ------ |
+| GET | [localhost:8080/ping][PlDb] | Check health API |
+| GET | [localhost:8080/challenge/alerts][PlDb] | List all alerts |
+| POST | [localhost:8080/challenge/alerts?type=Purple&description=alert purple to set &created_at=2023-04-15T00:00:00Z&country=colombia][PlDb] | Create Alert |
+| GET | [localhost:8080/challenge/alerts/search?input=de][PlDb] | Search Alerts by description or country with the given input|
+| GET | [localhost:8080/challenge/alerts/search-by-type?type=Red][PlDb] | Search Alerts by Type|
+| GET | [localhost:8080/challenge/alerts/metrics][PlDb] | Get alerts metrics (top 3 country with more alerts last month)|
