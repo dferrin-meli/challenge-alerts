@@ -7,11 +7,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"log"
 	"time"
 )
 
 const (
-	timeOut = time.Second * 10
+	timeOut  = time.Second * 10
+	myDomain = "Alerts"
+	myLayer  = "REPOSITORY"
 
 	GetAllQuery = `SELECT
 	Type,
@@ -68,7 +72,8 @@ func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alert, 
 		if errors.Is(queryErr, sql.ErrNoRows) {
 			return nil, nil
 		}
-		return nil, queryErr
+		log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+		return nil, fmt.Errorf(common.ErrorLog, myDomain, myLayer, errors.New("Error QueryContext in GetAll"))
 	}
 	defer rows.Close()
 
@@ -82,14 +87,16 @@ func (repository *AlertRepository) GetAll(ctx context.Context) ([]domain.Alert, 
 			&alert.Country,
 		)
 		if err != nil {
-			return nil, err
+			log.Printf(common.ErrorLog, myDomain, myLayer, err)
+			return nil, errors.New("Error rows.Scan in GetAll")
 		}
 
 		alerts = append(alerts, alert)
 	}
 
 	if rows.Err() != nil {
-		return nil, rows.Err()
+		log.Printf(common.ErrorLog, myDomain, myLayer, rows.Err())
+		return nil, errors.New("Error rows.Err in GetAll")
 	}
 	return alerts, nil
 }
@@ -106,7 +113,8 @@ func (repository *AlertRepository) Create(ctx context.Context, alert domain.Aler
 		alert.Country)
 
 	if err != nil {
-		return nil, err
+		log.Printf(common.ErrorLog, myDomain, myLayer, err)
+		return nil, errors.New("Error Create alert")
 	}
 	return &alert, nil
 }
@@ -121,7 +129,8 @@ func (repository *AlertRepository) Search(ctx context.Context, query domain.Aler
 		if errors.Is(queryErr, sql.ErrNoRows) {
 			return nil, nil
 		}
-		return nil, queryErr
+		log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+		return nil, errors.New("Error executing query in Search")
 	}
 	defer rows.Close()
 
@@ -135,14 +144,16 @@ func (repository *AlertRepository) Search(ctx context.Context, query domain.Aler
 			&alert.Country,
 		)
 		if err != nil {
-			return nil, err
+			log.Printf(common.ErrorLog, myDomain, myLayer, err)
+			return nil, errors.New("Error rows.Scan in Search")
 		}
 
 		alerts = append(alerts, alert)
 	}
 
 	if rows.Err() != nil {
-		return nil, rows.Err()
+		log.Printf(common.ErrorLog, myDomain, myLayer, rows.Err())
+		return nil, errors.New("Error rows.Err in Search")
 	}
 	return alerts, nil
 }
@@ -157,7 +168,8 @@ func (repository *AlertRepository) GetAlertsByType(ctx context.Context, typeInpu
 		if errors.Is(queryErr, sql.ErrNoRows) {
 			return nil, nil
 		}
-		return nil, queryErr
+		log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+		return nil, errors.New("Error executing query in GetAlertsByType")
 	}
 	defer rows.Close()
 
@@ -171,14 +183,16 @@ func (repository *AlertRepository) GetAlertsByType(ctx context.Context, typeInpu
 			&alert.Country,
 		)
 		if err != nil {
-			return nil, err
+			log.Printf(common.ErrorLog, myDomain, myLayer, err)
+			return nil, errors.New("Error rows.Scan in GetAlertsByType")
 		}
 
 		alerts = append(alerts, alert)
 	}
 
 	if rows.Err() != nil {
-		return nil, rows.Err()
+		log.Printf(common.ErrorLog, myDomain, myLayer, rows.Err())
+		return nil, errors.New("Error rows.Err() in GetAlertsByType")
 	}
 	return alerts, nil
 }
@@ -193,7 +207,8 @@ func (repository *AlertRepository) GetMetrics(ctx context.Context) ([]domain.Met
 		if errors.Is(queryErr, sql.ErrNoRows) {
 			return nil, nil
 		}
-		return nil, queryErr
+		log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+		return nil, errors.New("Error executing query in GetMetrics")
 	}
 	defer rows.Close()
 
@@ -205,14 +220,16 @@ func (repository *AlertRepository) GetMetrics(ctx context.Context) ([]domain.Met
 			&metric.Quantity,
 		)
 		if err != nil {
-			return nil, err
+			log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+			return nil, errors.New("Error rows.Scan in GetMetrics")
 		}
 
 		metrics = append(metrics, metric)
 	}
 
 	if rows.Err() != nil {
-		return nil, rows.Err()
+		log.Printf(common.ErrorLog, myDomain, myLayer, queryErr)
+		return nil, errors.New("Error rows.Err() in GetMetrics")
 	}
 	return metrics, nil
 }

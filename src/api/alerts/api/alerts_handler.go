@@ -45,7 +45,7 @@ func (handler *AlertsHandler) Create(ctx *gin.Context) common.ApiError {
 
 	response, err := handler.alertService.Create(ctx, request)
 	if err != nil {
-		return common.NewInternalServerApiError("", err)
+		return common.NewInternalServerApiError("Error Create Alert", err)
 	}
 	ctx.JSON(http.StatusCreated, response)
 	return nil
